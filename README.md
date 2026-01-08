@@ -1,5 +1,5 @@
 # SBM_smart-plant-monitoring-system
-plorian peros 23060300
+plorian peros 2306030071
 M rifky ramadhan 2306030042
 
 # Monitoring kelembapan tanah dan intensitas cahaya tanaman
@@ -81,3 +81,289 @@ Digunakan untuk penyiraman otomatis tanaman.
 
 Adaptor / Catu Daya
 Sebagai sumber tegangan untuk sistem.
+
+## pengujian sensor
+
+```
+// ==========================
+// Pin ESP32
+// ==========================
+const int moisturePin = 35;   // D35 - sensor kelembapan tanah
+const int lightPin    = 32;   // D32 - sensor cahaya
+const int relayPin    = 33;   // D33 - relay pompa
+const int ledPin      = 25;   // D25 - LED indikator cahaya
+
+// ==========================
+int batasKering = 2000;
+
+// PWM LED
+const int pwmFreq = 5000;
+const int pwmResolution = 8;   // 0–255
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, HIGH); // pompa OFF
+
+  // Setup PWM ESP32 (API baru)
+  ledcAttach(ledPin, pwmFreq, pwmResolution);
+  ledcWrite(ledPin, 0); // LED mati awal
+}
+
+void loop() {
+
+  // ==========================
+  // Baca sensor
+  // ==========================
+  int moistureValue = analogRead(moisturePin);
+  int lightValueRaw = analogRead(lightPin);
+
+  // ==========================
+  // Cahaya → Persentase LED (0–100%)
+  // Gelap → 100%
+  // Terang → 0%
+  // ==========================
+  int ledPercent = map(lightValueRaw, 0, 4095, 100, 0);
+  ledPercent = constrain(ledPercent, 0, 100);
+
+  // Konversi % → PWM (0–255)
+  int ledPWM = map(ledPercent, 0, 100, 0, 255);
+
+  // Tulis ke LED
+  ledcWrite(ledPin, ledPWM);
+
+  // ==========================
+  // Kontrol relay kelembapan
+  // ==========================
+  if (moistureValue >= batasKering) {
+    digitalWrite(relayPin, LOW);   // tanah basah → pompa OFF
+  } else {
+    digitalWrite(relayPin, HIGH);  // tanah kering → pompa ON
+  }
+
+  // ==========================
+  // Serial Monitor
+  // ==========================
+  Serial.print("Moisture: ");
+  Serial.print(moistureValue);
+  Serial.print(" | Cahaya ADC: ");
+  Serial.print(lightValueRaw);
+  Serial.print(" | LED: ");
+  Serial.print(ledPercent);
+  Serial.print("% | Pompa: ");
+  Serial.println(moistureValue < batasKering ? "ON" : "OFF");
+
+  delay(300);
+}
+```
+> Dari hasil pengujian yang telah dilakukan, sensor kelembapan tanah dan sensor cahaya dapat bekerja dengan baik dan memberikan respon terhadap perubahan kondisi tanah dan cahaya. Sensor siap digunakan dalam proses monitoring tanaman.
+
+## pengujian output (LED,RELAY)
+
+```
+const int moisturePin = A0;   // sensor kelembapan tanah
+const int lightPin = A1;      // sensor cahaya
+const int relayPin = 7;       // relay untuk pompa
+const int ledPin = 6;         // LED indikator cahaya (PWM)
+
+int batasKering = 600;  // ambang tanah kering
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(relayPin, OUTPUT);
+  pinMode(ledPin, OUTPUT);
+
+  // relay OFF saat awal (karena active LOW)
+  digitalWrite(relayPin, HIGH);
+}
+
+void loop() {
+
+  // ==========================
+  // Baca sensor
+  // ==========================
+  int moistureValue = analogRead(moisturePin);
+  int lightValueRaw = analogRead(lightPin);
+
+  // ==========================
+  // Mapping cahaya ke 0–100%
+  // ==========================
+  int lightPercent = map(lightValueRaw, 0, 1023, 0, 100);
+  lightPercent = constrain(lightPercent, 0, 100);
+
+  // ==========================
+  // LED terbalik
+  // ==========================
+  int ledBrightness = map(lightPercent, 0, 100, 255, 0);
+  ledBrightness = constrain(ledBrightness, 0, 255);
+  analogWrite(ledPin, ledBrightness);
+
+  // ==========================
+  // Kontrol relay kelembapan
+  // ==========================
+  if (moistureValue >= batasKering) {
+    digitalWrite(relayPin, LOW);   // tanah basah → pompa OFF
+  } else {
+    digitalWrite(relayPin, HIGH);  // tanah kering → pompa ON
+  }
+
+  // ==========================
+  // Serial Monitor
+  // ==========================
+  Serial.print("Moisture: ");
+  Serial.print(moistureValue);
+  Serial.print(" | Cahaya: ");
+  Serial.print(lightPercent);
+  Serial.print("% | LED PWM: ");
+  Serial.println(ledBrightness);
+
+  delay(300);
+}. Ubahkan untuk ESP 32. moisture sensor pin D35, light sensor pin D32, dan relay pin D33.
+
+```
+> Hasil pengujian menunjukkan bahwa output sistem LED dan relay bekerja sesuai kondisi aktual. Output bekerja normal tanpa kendala.
+
+## pengujian menghubungkan ke aplikasi blynk
+
+```
+## #define BLYNK_TEMPLATE_ID "TMPL6YVr2qERf"
+#define BLYNK_TEMPLATE_NAME "smart plant monitoring"
+#define BLYNK_AUTH_TOKEN "u77TgRTNKTcLkj5bPFpYqiGNwjUcxMsX"
+#define BLYNK_PRINT Serial
+
+#include <WiFi.h>
+#include <BlynkSimpleEsp32.h>
+
+// ==========================
+// WiFi
+// ==========================
+char ssid[] = "Ryan D Gracia";
+char pass[] = "99999999";
+
+// ==========================
+// Pin ESP32
+// ==========================
+const int moisturePin = 35;   // sensor kelembapan tanah
+const int lightPin    = 34;   // sensor cahaya
+const int relayPin    = 33;   // relay pompa
+const int ledPin      = 25;   // LED indikator cahaya
+
+// ==========================
+int batasKering = 2000;
+
+// PWM LED
+const int pwmFreq = 5000;
+const int pwmResolution = 8;   // 0–255
+
+bool manualRelay = false;   // kontrol manual dari Blynk (V4)
+
+// ==========================
+// V4 - Switch Relay dari Blynk
+// ==========================
+BLYNK_WRITE(V4) {
+  int relayCmd = param.asInt(); // 0 / 1
+  manualRelay = true;
+
+  if (relayCmd == 1) {
+    digitalWrite(relayPin, HIGH); // pompa ON
+  } else {
+    digitalWrite(relayPin, LOW);  // pompa OFF
+  }
+}
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(relayPin, OUTPUT);
+  digitalWrite(relayPin, HIGH); // pompa OFF awal
+
+  // PWM LED ESP32 (API baru)
+  ledcAttach(ledPin, pwmFreq, pwmResolution);
+  ledcWrite(ledPin, 0);
+
+  // Koneksi Blynk
+  Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass);
+}
+
+void loop() {
+
+  Blynk.run();
+
+  // ==========================
+  // Baca sensor
+  // ==========================
+  int moistureValue = analogRead(moisturePin); // 0–4095
+  int lightValueRaw = analogRead(lightPin);    // 0–4095
+
+  // ==========================
+  // Sensor → Persen (0–100%)
+  // ==========================
+
+  // Kelembapan: kering=0%, basah=100%
+  int moisturePercent = map(moistureValue, 4095, 0, 0, 100);
+  moisturePercent = constrain(moisturePercent, 0, 100);
+
+  // Cahaya: gelap=0%, terang=100%
+  int lightPercent = map(lightValueRaw, 0, 4095, 0, 100);
+  lightPercent = constrain(lightPercent, 0, 100);
+
+  // ==========================
+  // LED fisik (PWM, terbalik)
+  // ==========================
+  int ledPercent = map(lightValueRaw, 0, 4095, 100, 0);
+  ledPercent = constrain(ledPercent, 0, 100);
+
+  int ledPWM = map(ledPercent, 0, 100, 0, 255);
+  ledcWrite(ledPin, ledPWM);
+
+  // ==========================
+  // Kontrol relay otomatis
+  // ==========================
+  if (!manualRelay) {
+    if (moistureValue >= batasKering) {
+      digitalWrite(relayPin, LOW);   // basah → OFF
+    } else {
+      digitalWrite(relayPin, HIGH);  // kering → ON
+    }
+  }
+
+  // ==========================
+  // Kirim ke Blynk
+  // ==========================
+  Blynk.virtualWrite(V0, moisturePercent);        // kelembapan %
+  Blynk.virtualWrite(V1, lightPercent);           // cahaya %
+  Blynk.virtualWrite(V2, digitalRead(relayPin)); // relay 0/1
+
+  int ledStatus = (ledPercent > 0) ? 1 : 0;
+  Blynk.virtualWrite(V3, ledStatus);              // LED 0/1
+
+  // ==========================
+  // Serial Monitor
+  // ==========================
+  Serial.print("Moisture: ");
+  Serial.print(moisturePercent);
+  Serial.print("% | Cahaya: ");
+  Serial.print(lightPercent);
+  Serial.print("% | LED: ");
+  Serial.print(ledPercent);
+  Serial.print("% | Pompa: ");
+  Serial.println(digitalRead(relayPin) == HIGH ? "ON" : "OFF");
+
+  delay(300);
+}
+```
+> pada kondisi awal kami selalu gagal menghubungkan hotspot hp ke wifi laptop. tapi kami terus berjuang sampai akhirnya behasil dan bisa mengontrol menggunakan hp.
+
+
+<img width="1600" height="1200" alt="image" src="https://github.com/user-attachments/assets/1c0f9530-eb73-492a-8388-16b41a863e15" />
+
+
+
+
+
+
+
+
+
+
