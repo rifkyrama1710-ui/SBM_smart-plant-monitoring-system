@@ -1,5 +1,5 @@
 # SBM_smart-plant-monitoring-system
-plorian peros 2306030071
+Florian peros 2306030071
 M rifky ramadhan 2306030042
 
 # Monitoring kelembapan tanah dan intensitas cahaya tanaman
@@ -361,9 +361,46 @@ void loop() {
 
 
 
+Hasil dan Pembahasan
+### 1. Hasil Pengujian Sistem
+
+Sistem monitoring kelembapan tanah dan intensitas cahaya tanaman telah berhasil dirancang dan direalisasikan sesuai dengan perencanaan. Sistem terdiri dari sensor kelembapan tanah, sensor intensitas cahaya, mikrokontroler sebagai pengolah data, serta media output berupa tampilan data.
+Berdasarkan hasil pengujian, sensor kelembapan tanah mampu mendeteksi perubahan tingkat kelembapan tanah dengan baik. Nilai yang ditampilkan mengalami perubahan sesuai dengan kondisi tanah, baik pada kondisi kering maupun basah. Sensor intensitas cahaya juga menunjukkan respon yang baik terhadap perubahan cahaya, di mana nilai yang terbaca meningkat saat intensitas cahaya tinggi dan menurun saat cahaya berkurang.
+Data hasil pembacaan sensor dapat ditampilkan secara real-time melalui media output tanpa adanya keterlambatan yang signifikan. Hal ini menunjukkan bahwa komunikasi antara sensor, mikrokontroler, dan perangkat output berjalan dengan baik.
+
+### 2. Pembahasan
+
+Hasil pengujian menunjukkan bahwa sistem monitoring yang dikembangkan mampu menjalankan fungsinya sesuai dengan tujuan proyek. Pembacaan sensor kelembapan tanah memberikan informasi yang berguna dalam menentukan kondisi tanah tanaman, sehingga dapat dijadikan acuan dalam pengambilan keputusan penyiraman. Sementara itu, sensor intensitas cahaya berperan dalam mengetahui tingkat pencahayaan yang diterima tanaman untuk mendukung proses fotosintesis.
+Akurasi pembacaan sensor dipengaruhi oleh beberapa faktor, seperti kondisi lingkungan, jenis tanah, dan posisi pemasangan sensor. Meskipun demikian, secara umum sistem telah mampu memberikan gambaran kondisi lingkungan tanaman secara akurat dan konsisten.
+Keunggulan dari sistem ini adalah kemampuannya dalam memantau kondisi tanaman secara berkelanjutan dan efisien. Namun, sistem ini masih memiliki keterbatasan, seperti belum adanya penyimpanan data historis dan pemantauan jarak jauh. Oleh karena itu, pengembangan lebih lanjut dapat dilakukan dengan menambahkan fitur berbasis Internet of Things (IoT), integrasi data logging, serta otomatisasi penyiraman tanaman.
+
+<img width="1600" height="1200" alt="image" src="https://github.com/user-attachments/assets/dcc756b2-a70c-455b-9819-cc240ec3d4f2" />
 
 
+## Kesimpulan
 
+Berdasarkan hasil perancangan, implementasi, serta pengujian sistem yang telah dilakukan, dapat disimpulkan bahwa sistem monitoring kelembapan tanah dan intensitas cahaya tanaman berhasil dirancang dan diimplementasikan sesuai dengan tujuan penelitian. Sistem mampu melakukan pembacaan data kelembapan tanah dan intensitas cahaya secara real-time menggunakan sensor yang terintegrasi dengan mikrokontroler.
+Hasil pengujian menunjukkan bahwa sistem dapat menampilkan data hasil pembacaan sensor dengan baik dan stabil, serta memberikan informasi yang sesuai dengan kondisi lingkungan tanaman. Dengan demikian, sistem ini dapat digunakan sebagai alat bantu dalam pemantauan kondisi tanaman secara lebih akurat dan efisien dibandingkan metode konvensional.
+Secara keseluruhan, proyek ini berpotensi untuk mendukung penerapan konsep pertanian cerdas (smart farming). Pengembangan lebih lanjut dapat dilakukan dengan menambahkan fitur otomatisasi penyiraman, penyimpanan data, serta pemantauan jarak jauh berbasis Internet of Things (IoT).
 
+<img width="1600" height="1200" alt="image" src="https://github.com/user-attachments/assets/a7fa12d4-4c7a-473e-95d3-e4b9aaee1cce" />
 
+# kelompok 
 
+## florian peros
+- Melakukan **riset literatur** terkait sistem Smart Street Lighting, sensor cahaya, RELAY, dan integrasi IoT.  
+- **Membuat dan menguji program** untuk prototipe , baik versi lokal (non-IoT) maupun versi IoT dengan ESP32 dan Blynk.  
+- Menyusun **wiring sistem/hardware**, termasuk koneksi sensor LED dan RELAY  
+- Melakukan **simulasi** sistem di Wokwi untuk pengujian awal dan validasi logika program.  
+- **Integrasi sistem** antara sensor, mikrokontroler, dan Blynk, termasuk uji coba kontrol manual dan otomatis.  
+- Mengatur **data stream Blynk**, pengujian komunikasi, dan monitoring real-time.  
+- Memastikan seluruh prototipe berjalan stabil, efisien, dan siap untuk implementasi fisik.  
+- Menyusun **dokumentasi visual** berupa tabel pengujian, grafik, dan foto prototipe.
+PENILAIAN : 80/100
+## m rifky ramadhana
+- Membuat dan menulis **laporan proyek** secara detail, termasuk dokumentasi pengujian dan integrasi. 
+- Membantu melakukan **pemeriksaan kondisi kabel dan koneksi hardware**, memastikan semua jalur listrik dan sinyal aman dan sesuai rancangan.  
+- Membantu proses **wiring hardware** untuk koneksi ESP32, LED, sensor LDR, RTC, dan LCD.  
+- Berperan dalam **uji coba fisik prototipe**, memberikan masukan terkait kestabilan dan keamanan sistem saat diimplementasikan.
+- Mendokumentasikan kegiatan.
+PENILAIAN : 80/100
