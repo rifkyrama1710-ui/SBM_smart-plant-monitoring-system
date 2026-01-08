@@ -397,7 +397,7 @@ Secara keseluruhan, proyek ini berpotensi untuk mendukung penerapan konsep perta
 - Memastikan seluruh prototipe berjalan stabil, efisien, dan siap untuk implementasi fisik.  
 - Menyusun **dokumentasi visual** berupa tabel pengujian, grafik, dan foto prototipe.
 PENILAIAN : 80/100
-## m rifky ramadhana
+## m rifky ramadhan
 - Membuat dan menulis **laporan proyek** secara detail, termasuk dokumentasi pengujian dan integrasi. 
 - Membantu melakukan **pemeriksaan kondisi kabel dan koneksi hardware**, memastikan semua jalur listrik dan sinyal aman dan sesuai rancangan.  
 - Membantu proses **wiring hardware** untuk koneksi ESP32, LED, sensor LDR, RTC, dan LCD.  
